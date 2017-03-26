@@ -11,9 +11,6 @@ import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by iiro on 22.8.2016.
- */
 @RunWith(AndroidJUnit4.class)
 public class BottomBarTabTest {
     private FrameLayout tabContainer;
@@ -31,6 +28,12 @@ public class BottomBarTabTest {
     public void correctLayoutReturned_ForFixedTab() {
         tab.setType(BottomBarTab.Type.FIXED);
         assertEquals(R.layout.bb_bottom_bar_item_fixed, tab.getLayoutResource());
+    }
+
+    @Test
+    public void correctLayoutReturned_ForTitlelessTab() {
+        tab.setType(BottomBarTab.Type.TITLELESS);
+        assertEquals(R.layout.bb_bottom_bar_item_titleless, tab.getLayoutResource());
     }
 
     @Test

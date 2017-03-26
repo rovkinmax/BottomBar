@@ -57,6 +57,8 @@ public class BottomBar extends LinearLayout implements View.OnClickListener, Vie
     private static final int BEHAVIOR_SHIFTING = 1;
     private static final int BEHAVIOR_SHY = 2;
     private static final int BEHAVIOR_DRAW_UNDER_NAV = 4;
+    private static final int BEHAVIOR_ICONS_ONLY = 8;
+
     private BatchTabPropertyApplier batchPropertyApplier;
     private int primaryColor;
     private int screenWidth;
@@ -141,6 +143,11 @@ public class BottomBar extends LinearLayout implements View.OnClickListener, Vie
             tabXmlResource = ta.getResourceId(R.styleable.BottomBar_bb_tabXmlResource, 0);
             isTabletMode = ta.getBoolean(R.styleable.BottomBar_bb_tabletMode, false);
             behaviors = ta.getInteger(R.styleable.BottomBar_bb_behavior, BEHAVIOR_NONE);
+
+            if (isIconsOnlyMode() && isShiftingMode()) {
+                throw new UnsupportedOperationException("Can't be shifting and icons only at the same time.");
+            }
+
             inActiveTabAlpha = ta.getFloat(R.styleable.BottomBar_bb_inActiveTabAlpha,
                     isShiftingMode() ? DEFAULT_INACTIVE_SHIFTING_TAB_ALPHA : 1);
             activeTabAlpha = ta.getFloat(R.styleable.BottomBar_bb_activeTabAlpha, 1);
@@ -175,6 +182,8 @@ public class BottomBar extends LinearLayout implements View.OnClickListener, Vie
     private boolean isShy() {
         return !isTabletMode && hasBehavior(BEHAVIOR_SHY);
     }
+
+    private boolean isIconsOnlyMode() { return !isTabletMode && hasBehavior(BEHAVIOR_ICONS_ONLY); }
 
     private boolean hasBehavior(int behavior) {
         return (behaviors | behavior) == behaviors;
@@ -281,6 +290,8 @@ public class BottomBar extends LinearLayout implements View.OnClickListener, Vie
                 type = BottomBarTab.Type.SHIFTING;
             } else if (isTabletMode) {
                 type = BottomBarTab.Type.TABLET;
+            } else if (isIconsOnlyMode()) {
+                type = BottomBarTab.Type.TITLELESS;
             } else {
                 type = BottomBarTab.Type.FIXED;
             }
@@ -682,6 +693,10 @@ public class BottomBar extends LinearLayout implements View.OnClickListener, Vie
     }
 
     private void updateTitleBottomPadding() {
+        if (isIconsOnlyMode()) {
+            return;
+        }
+
         int tabCount = getTabCount();
 
         if (tabContainer == null || tabCount == 0 || !isShiftingMode()) {

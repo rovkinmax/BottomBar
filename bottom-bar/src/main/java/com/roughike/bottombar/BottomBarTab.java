@@ -89,14 +89,15 @@ public class BottomBarTab extends LinearLayout {
     void prepareLayout() {
         inflate(getContext(), getLayoutResource(), this);
         setOrientation(VERTICAL);
-        setGravity(Gravity.CENTER_HORIZONTAL);
+        setGravity(type == Type.TITLELESS? Gravity.CENTER : Gravity.CENTER_HORIZONTAL);
         setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 
         iconView = (AppCompatImageView) findViewById(R.id.bb_bottom_bar_icon);
         iconView.setImageResource(iconResId);
 
-        if (type != Type.TABLET) {
+        if (type != Type.TABLET && type != Type.TITLELESS) {
             titleView = (TextView) findViewById(R.id.bb_bottom_bar_title);
+            titleView.setVisibility(VISIBLE);
             updateTitle();
         }
 
@@ -110,6 +111,9 @@ public class BottomBarTab extends LinearLayout {
         switch (type) {
             case FIXED:
                 layoutResource = R.layout.bb_bottom_bar_item_fixed;
+                break;
+            case TITLELESS:
+                layoutResource = R.layout.bb_bottom_bar_item_titleless;
                 break;
             case SHIFTING:
                 layoutResource = R.layout.bb_bottom_bar_item_shifting;
@@ -361,13 +365,20 @@ public class BottomBarTab extends LinearLayout {
         isActive = true;
 
         if (animate) {
-            setTopPaddingAnimated(iconView.getPaddingTop(), sixDps);
+            if (type != Type.TITLELESS) {
+                setTopPaddingAnimated(iconView.getPaddingTop(), sixDps);
+            }
+
             animateIcon(activeAlpha);
             animateTitle(ACTIVE_TITLE_SCALE, activeAlpha);
             animateColors(inActiveColor, activeColor);
         } else {
             setTitleScale(ACTIVE_TITLE_SCALE);
-            setTopPadding(sixDps);
+
+            if (type != Type.TITLELESS) {
+                setTopPadding(sixDps);
+            }
+
             setColors(activeColor);
             setAlphas(activeAlpha);
         }
@@ -387,13 +398,20 @@ public class BottomBarTab extends LinearLayout {
         int iconPaddingTop = isShifting ? sixteenDps : eightDps;
 
         if (animate) {
-            setTopPaddingAnimated(iconView.getPaddingTop(), iconPaddingTop);
+            if (type != Type.TITLELESS) {
+                setTopPaddingAnimated(iconView.getPaddingTop(), iconPaddingTop);
+            }
+
             animateTitle(scale, inActiveAlpha);
             animateIcon(inActiveAlpha);
             animateColors(activeColor, inActiveColor);
         } else {
             setTitleScale(scale);
-            setTopPadding(iconPaddingTop);
+
+            if (type != Type.TITLELESS) {
+                setTopPadding(iconPaddingTop);
+            }
+
             setColors(inActiveColor);
             setAlphas(inActiveAlpha);
         }
@@ -539,7 +557,7 @@ public class BottomBarTab extends LinearLayout {
     }
 
     private void setTitleScale(float scale) {
-        if (type == Type.TABLET) {
+        if (type == Type.TABLET || type == Type.TITLELESS) {
             return;
         }
 
@@ -586,7 +604,7 @@ public class BottomBarTab extends LinearLayout {
     }
 
     enum Type {
-        FIXED, SHIFTING, TABLET
+        FIXED, SHIFTING, TITLELESS, TABLET
     }
 
     public static class Config {
