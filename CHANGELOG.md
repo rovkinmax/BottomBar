@@ -2,6 +2,10 @@
 
 (or: y u no add shiny new things?!)
 
+### 2.2.1
+
+* The toasts can now be disabled when long pressing tabs.
+
 ### 2.2.0
 
 * Ability to change icons when the tabs are selected, using drawable selectors
