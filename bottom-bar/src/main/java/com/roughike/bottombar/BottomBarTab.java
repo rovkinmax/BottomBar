@@ -65,6 +65,7 @@ public class BottomBarTab extends LinearLayout {
     private int indexInContainer;
     private int titleTextAppearanceResId;
     private Typeface titleTypeFace;
+    private int badgeMaxCount = Integer.MAX_VALUE;
 
     BottomBarTab(Context context) {
         super(context);
@@ -292,6 +293,10 @@ public class BottomBarTab extends LinearLayout {
         return 0;
     }
 
+    public void setBadgeMaxCount(int badgeMaxCount) {
+        this.badgeMaxCount = badgeMaxCount;
+    }
+
     public void setBadgeCount(int count) {
         if (count <= 0) {
             if (badge != null) {
@@ -304,6 +309,7 @@ public class BottomBarTab extends LinearLayout {
 
         if (badge == null) {
             badge = new BottomBarBadge(getContext());
+            badge.setMaxCount(badgeMaxCount);
             badge.attachToTab(this, badgeBackgroundColor);
         }
 
@@ -459,7 +465,9 @@ public class BottomBarTab extends LinearLayout {
             @Override
             public void onAnimationUpdate(ValueAnimator animator) {
                 ViewGroup.LayoutParams params = getLayoutParams();
-                if (params == null) return;
+                if (params == null) {
+                    return;
+                }
 
                 params.width = Math.round((float) animator.getAnimatedValue());
                 setLayoutParams(params);
